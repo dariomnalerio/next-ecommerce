@@ -4,11 +4,18 @@ import Image from "next/image"; // Image is a component that will lazy load imag
 import { useCartStore } from "@/store"; // Import the useCartStore hook
 import formatPrice from "@/util/PriceFormat"; // Import the price formatter
 import { IoAddCircle, IoRemoveCircle } from "react-icons/io5"; // Import the add and remove icons
-import basket from '@/public/basket.png'
+import basket from "@/public/basket.png";
 
 // Cart component
 export default function Cart() {
   const cartStore = useCartStore();
+
+  // Total price
+  // Reduce the cart array to a single value
+  const totalPrice = cartStore.cart.reduce((acc, item) => {
+    return acc + item.unit_amount! * item.quantity!;
+  }, 0); // Starting value
+
   return (
     <div
       onClick={() => cartStore.toggleCart()}
@@ -71,6 +78,9 @@ export default function Cart() {
             </div>
           )
         )}
+        {/* Checkout and total */}
+        {cartStore.cart.length > 0 && <p>Total: {formatPrice(totalPrice)}</p>}
+        {cartStore.cart.length <= 0 && <></>} {/* If cart is empty, display nothing */}
         {cartStore.cart.length > 0 && (
           <button className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
             Checkout

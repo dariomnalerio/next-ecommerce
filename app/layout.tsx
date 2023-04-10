@@ -3,6 +3,10 @@ import Nav from "./components/Nav";
 import { getServerSession } from "next-auth/next"; // Import the getServerSession function, which will fetch the user's session
 import { authOptions } from "@/pages/api/auth/[...nextauth]"; // Import the authOptions object, which contains the NextAuth.js configuration
 import Hydrate from "./components/Hydrate"; // Import the Hydrate component to prevent React hydration errors
+import { Roboto } from "next/font/google";
+
+// Define main font
+const roboto = Roboto({weight: ['400', '500', '700'], subsets: ['latin']})
 
 export const metadata = {
   title: "Create Next App",
@@ -18,7 +22,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="en">
-      <body className="mx-64">
+      <body className={`mx-64 ${roboto.className}`}>
         <Hydrate>
         <Nav user={session?.user} expires={session?.expires as string} />
         {children}
