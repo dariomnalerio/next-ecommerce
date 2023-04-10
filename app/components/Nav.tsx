@@ -7,6 +7,7 @@ import Link from "next/link"; // Link is a component that will prefetch pages
 import Cart from "./Cart"; // Import the Cart component
 import { useCartStore } from "@/store"; // Import the useCartStore hook
 import { AiFillShopping } from "react-icons/ai"; // Import the shopping cart icon
+import { motion, AnimatePresence} from "framer-motion";
 
 // Navigation bar
 export default function Nav({ user }: Session) {
@@ -23,9 +24,18 @@ export default function Nav({ user }: Session) {
           className="flex items-center text-3xl relative cursor-pointer"
         >
           <AiFillShopping />
-          <span className="bg-teal-700 text-white text-sm font-bold w-5 h-5 rounded-full absolute left-4 bottom-4 flex items-center justify-center">
-            {cartStore.cart.length}
-          </span>
+          <AnimatePresence>
+            {cartStore.cart.length > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                className="bg-teal-700 text-white text-sm font-bold w-5 h-5 rounded-full absolute left-4 bottom-4 flex items-center justify-center"
+              >
+                {cartStore.cart.length}
+              </motion.span>
+            )}
+          </AnimatePresence>
           {/* If the user is not signed in */}
         </li>
         {!user && ( // Show if user is not signed in
@@ -43,7 +53,9 @@ export default function Nav({ user }: Session) {
           />
         )}
       </ul>
+      <AnimatePresence> 
       {cartStore.isOpen && <Cart />}
+      </AnimatePresence>
     </nav>
   );
 }
