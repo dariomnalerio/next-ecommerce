@@ -9,6 +9,10 @@ type CartState = {
   toggleCart: () => void;
   addProduct: (item: AddCartType) => void;
   removeProduct: (item: AddCartType) => void;
+  paymentIntent: string;
+  onCheckout: string;
+  setPaymentIntent: (val: string) => void;
+  setCheckout: (val: string) => void;
 };
 
 // Cart store with persist middleware
@@ -17,6 +21,8 @@ export const useCartStore = create<CartState>()(
     (set) => ({
       cart: [],
       isOpen: false,
+      paymentIntent: "",
+      onCheckout: "cart",
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })), // Open or close the cart
       addProduct: (item) =>
         set((state) => {
@@ -26,7 +32,7 @@ export const useCartStore = create<CartState>()(
           if (existingItem) {
             const updatedCart = state.cart.map((cartItem) => {
               if (cartItem.id === item.id) {
-                return { ...cartItem, quantity: cartItem.quantity + 1 }; // If item exists, update quantity
+                return { ...cartItem, quantity: cartItem.quantity! + 1 }; // If item exists, update quantity
               }
               return cartItem; // If item doesn't exist, return the cart item
             });
@@ -41,21 +47,24 @@ export const useCartStore = create<CartState>()(
           const existingItem = state.cart.find(
             (cartItem) => cartItem.id === item.id
           );
-          if (existingItem && existingItem.quantity > 1) {
+          if (existingItem && existingItem.quantity! > 1) {
             const updatedCart = state.cart.map((cartItem) => {
               if (cartItem.id === item.id) {
-                return { ...cartItem, quantity: cartItem.quantity - 1 }; // If item exists, update quantity
+                return { ...cartItem, quantity: cartItem.quantity! - 1 }; // If item exists, update quantity
               }
               return cartItem; // If item doesn't exist, return the cart item
             });
             return { cart: updatedCart }; // Return updated cart
-          } else {  // If quantity <= 0, remove the item from the cart // If quantity <= 0, remove the item from the cart
+          } else {
+            // If quantity <= 0, remove the item from the cart // If quantity <= 0, remove the item from the cart
             const filteredCart = state.cart.filter(
               (cartItem) => cartItem.id !== item.id
             );
             return { cart: filteredCart };
           }
         }),
+      setPaymentIntent: (val) => set((state) => ({ paymentIntent: val })),
+      setCheckout: (val) => set((state) => ({ onCheckout: val }))
     }),
     { name: "cart-store" }
   )

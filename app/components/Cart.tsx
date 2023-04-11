@@ -6,6 +6,7 @@ import formatPrice from "@/util/PriceFormat"; // Import the price formatter
 import { IoAddCircle, IoRemoveCircle } from "react-icons/io5"; // Import the add and remove icons
 import basket from "@/public/basket.png";
 import { motion as motion, AnimatePresence } from "framer-motion";
+import Checkout from "./Checkout,";
 
 // Cart component
 export default function Cart() {
@@ -32,70 +33,83 @@ export default function Cart() {
         onClick={(e) => e.stopPropagation()}
         className="bg-white absolute right-0 top-0 h-screen p-12 overflow-y-scroll text-gray-700 w-full lg:w-2/5"
       >
-        <button onClick={() => cartStore.toggleCart()} className="text-sm font-bold pb-12">Back to store 🏃</button>
-        {cartStore.cart.map(
-          (
-            item // Maps through the cart array
-          ) => (
-            <motion.div layout key={item.id} className="flex py-4 gap-4">
-              <Image
-                className=" rounded-md h-24"
-                src={item.image}
-                alt={item.name}
-                width={120}
-                height={120}
-              />
-              <motion.div layout>
-                <h2>{item.name}</h2>
-                {/* Update quantity of a product */}
-                <div className="flex gap-2">
-                  <h2>Quantity: {item.quantity}</h2>
-                  <button
-                    onClick={() =>
-                      cartStore.removeProduct({
-                        name: item.name,
-                        id: item.id,
-                        quantity: item.quantity,
-                        image: item.image,
-                        unit_amount: item.unit_amount,
-                      })
-                    }
-                  >
-                    <IoRemoveCircle />
-                  </button>
-                  <button
-                    onClick={() =>
-                      cartStore.addProduct({
-                        name: item.name,
-                        id: item.id,
-                        quantity: item.quantity,
-                        image: item.image,
-                        unit_amount: item.unit_amount,
-                      })
-                    }
-                  >
-                    <IoAddCircle />
-                  </button>
-                </div>
-                <p className="text-sm">
-                  {item.unit_amount && formatPrice(item.unit_amount)}
-                </p>{" "}
-                {/* If price is null, display N/A, else display price */}
-              </motion.div>
-            </motion.div>
-          )
+        <button
+          onClick={() => cartStore.toggleCart()}
+          className="text-sm font-bold pb-12"
+        >
+          Back to store 🏃
+        </button>
+        {/* Cart items (should just render out if onCheckout === 'cart')*/}
+        {cartStore.onCheckout === "cart" && (
+          <>
+            {cartStore.cart.map(
+              (
+                item // Maps through the cart array
+              ) => (
+                <motion.div layout key={item.id} className="flex py-4 gap-4">
+                  <Image
+                    className=" rounded-md h-24"
+                    src={item.image}
+                    alt={item.name}
+                    width={120}
+                    height={120}
+                  />
+                  <motion.div layout>
+                    <h2>{item.name}</h2>
+                    {/* Update quantity of a product */}
+                    <div className="flex gap-2">
+                      <h2>Quantity: {item.quantity}</h2>
+                      <button
+                        onClick={() =>
+                          cartStore.removeProduct({
+                            name: item.name,
+                            id: item.id,
+                            quantity: item.quantity,
+                            image: item.image,
+                            unit_amount: item.unit_amount,
+                          })
+                        }
+                      >
+                        <IoRemoveCircle />
+                      </button>
+                      <button
+                        onClick={() =>
+                          cartStore.addProduct({
+                            name: item.name,
+                            id: item.id,
+                            quantity: item.quantity,
+                            image: item.image,
+                            unit_amount: item.unit_amount,
+                          })
+                        }
+                      >
+                        <IoAddCircle />
+                      </button>
+                    </div>
+                    <p className="text-sm">
+                      {item.unit_amount && formatPrice(item.unit_amount)}
+                    </p>{" "}
+                    {/* If price is null, display N/A, else display price */}
+                  </motion.div>
+                </motion.div>
+              )
+            )}
+          </>
         )}
         {/* Checkout and total */}
-        <motion.div layout>
-          {cartStore.cart.length > 0 && <p>Total: {formatPrice(totalPrice)}</p>}
-          {cartStore.cart.length <= 0 && <></>}{" "}
-          {/* If cart is empty, display nothing */}
-          {cartStore.cart.length > 0 && (
-            <button className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
+        {cartStore.cart.length > 0 && (
+          <motion.div layout>
+            <p>Total: {formatPrice(totalPrice)}</p>
+            <button
+              onClick={() => cartStore.setCheckout("checkout")}
+              className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white"
+            >
               Checkout
             </button>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
+        {/* Checkout form */}
+        {cartStore.onCheckout === "checkout" && <Checkout />}
         <AnimatePresence>
           {!cartStore.cart.length && (
             <motion.div
