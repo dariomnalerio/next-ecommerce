@@ -32,17 +32,17 @@ export default async function handler(
     return;
   }
 
-  //Extract the data from the body
+  // Extract the data from the body
   const { items, payment_intent_id } = req.body;
-  console.log(items, payment_intent_id);
+  const total = calculateOrderAmount(items);
 
   // Create the order data
   const orderData = {
     user: { connect: { id: userSession.user?.id } },
-    amount: calculateOrderAmount(items),
+    amount: total,
     currency: "usd",
     status: "pending",
-    payment_intent_id: payment_intent_id,
+    paymentIntentID: payment_intent_id,
     products: {
       create: items.map((item) => ({
         name: item.name,
@@ -54,7 +54,7 @@ export default async function handler(
     },
   };
 
-  // Check if the payment intent exists, then updates the order
+  // Check if the payment intent exists, then update the order
   if (payment_intent_id) {
     const current_intent = await stripe.paymentIntents.retrieve(
       payment_intent_id
@@ -62,51 +62,54 @@ export default async function handler(
     if (current_intent) {
       const updated_intent = await stripe.paymentIntents.update(
         payment_intent_id,
-        { amount: calculateOrderAmount(items) }
+        { amount: total }
       );
-      // Fetch order with product id
-      const existing_order = await prisma.order.findFirst({
-        where: { payment_intent_id: updated_intent.id },
-        include: { products: true },
-      });
+
+      // Fetch order with product ids
+      const [existing_order, updated_order] = await Promise.all([
+        prisma.order.findFirst({
+          where: { paymentIntentID: updated_intent.id },
+          include: { products: true },
+        }),
+        prisma.order.update({
+          where: { paymentIntentID: updated_intent.id },
+          data: {
+            amount: total,
+            products: {
+              deleteMany: {},
+              create: items.map((item) => ({
+                name: item.name,
+                description: item.description || null,
+                unit_amount: parseFloat(item.unit_amount),
+                image: item.image,
+                quantity: item.quantity,
+              })),
+            },
+          },
+        }),
+      ]);
+
       if (!existing_order) {
         res.status(400).json({ message: "Invalid Payment Intent" });
+      } else {
+        res.status(200).json({ paymentIntent: updated_intent });
       }
-      // Update existing order
-      const updated_order = await prisma.order.update({
-        where: { id: existing_order?.id },
-        data: {
-          amount: calculateOrderAmount(items),
-          products: {
-            deleteMany: {},
-            create: items.map((item) => ({
-              name: item.name,
-              description: item.description || null,
-              unit_amount: parseFloat(item.unit_amount),
-              image: item.image,
-              quantity: item.quantity,
-            })),
-          },
-        },
-      });
-      res.status(200).json({ paymentIntent: updated_intent }); // Send back updated payment intent to the client
       return;
     }
   } else {
-    // Create new payment intent
+    // Create a new order with prisma
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: calculateOrderAmount(items),
+      amount: total,
       currency: "usd",
       automatic_payment_methods: { enabled: true },
     });
-    // Create new order with prisma
-    orderData.payment_intent_id = paymentIntent.id; // Add the payment intent id to the order data
+
+    orderData.paymentIntentID = paymentIntent.id;
     const newOrder = await prisma.order.create({
-      data: {
-        data: orderData,
-      },
+      data: orderData,
     });
-    res.status(200).json({ paymentIntent }); // Send back payment intent id to the client
-    return;
+
+    res.status(200).json({ paymentIntent
+    });
   }
 }
