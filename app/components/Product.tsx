@@ -28,6 +28,7 @@ export default function Product({
           width={600}
           height={600}
           className="w-97 h-97 object-fit rounded-lg"
+          priority={true}
         />
         <div className="font-medium py-2">
           <h1 className="text-lg">{name}</h1>
@@ -38,5 +39,5 @@ export default function Product({
         </div>
       </div>
     </Link>
-  ); 
+  );
 }

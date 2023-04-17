@@ -3,8 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import Stripe from "stripe";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/util/prisma";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -36,11 +35,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async session({session, token, user}){
+    async session({ session, token, user }) {
       session.user = user; // Add user to session
-      return session
-    }
-  }
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);

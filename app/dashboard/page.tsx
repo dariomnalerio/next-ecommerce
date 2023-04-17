@@ -22,10 +22,10 @@ const fetchOrders = async () => {
 export default async function Dashboard() {
   const orders = await fetchOrders();
   if (orders === null) {
-    return <div>You need to be logged in to view your orders</div>;
+    return <div className="text-center text-xl text-bold">You need to be logged in to view your orders</div>;
   }
   if (orders.length === 0) {
-    return <div className="text-lg|">No orders placed</div>;
+    return <div className="text-center text-xl text-bold">No orders placed</div>;
   }
   return (
     <div className="font-medium">
@@ -43,6 +43,7 @@ export default async function Dashboard() {
                         width={36}
                         height={36}
                         alt={product.name}
+                        priority={true}
                       />
                     </div>
                     <div className="flex flex-col">

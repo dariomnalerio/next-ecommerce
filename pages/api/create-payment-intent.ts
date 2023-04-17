@@ -3,15 +3,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
 import { AddCartType } from "@/types/AddCartType";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { prisma } from "@/util/prisma";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2022-11-15",
 });
-
-// Initialize Prisma
-const prisma = new PrismaClient();
 
 // Calculate the order amount from the items in the cart
 const calculateOrderAmount = (items: AddCartType[]) => {
@@ -109,7 +106,6 @@ export default async function handler(
       data: orderData,
     });
 
-    res.status(200).json({ paymentIntent
-    });
+    res.status(200).json({ paymentIntent });
   }
 }

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
-import { PrismaClient } from "@prisma/client";
 import { buffer } from "micro"; // buffer is used to parse the body of the request into a buffer, stripe webhooks events are sent as raw bytes
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/util/prisma";
 
 export const config = {
   api: {
@@ -13,9 +13,6 @@ export const config = {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2022-11-15",
 });
-
-// Initialize Prisma
-const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
