@@ -58,13 +58,13 @@ export default function CheckoutForm({
       <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
       <h1 className="py-4 text-sm font-bold">Total: {formattedPrice}</h1>
       <button
-        className={`py-2 mt-4 w-full bg-primary text-white disabled:opacity-25`}
+        className={`btn w-full bg-primary text-white disabled:opacity-25`}
         id="submit"
         disabled={isLoading || !stripe || !elements}
       >
         <span id="button-text">
           {/* If isLoading is true, show "Processing", else show "Pay now" */}
-          {isLoading ? <span> Processing 👀</span> : <span>Pay now</span>}
+          {isLoading ? <span> Processing...</span> : <span>Pay now</span>}
         </span>
       </button>
     </form>
