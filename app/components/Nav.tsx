@@ -17,7 +17,7 @@ export default function Nav({ user }: Session) {
   return (
       <nav className="flex justify-between items-center py-8 mb-10">
         <Link href={"/"}>
-          <h1 className="font-lobster text-xl mx-5">Styled</h1>
+          <h1 className="font-lobster text-2xl mx-5">Home</h1>
         </Link>
         <ul className="flex items-center gap-8 mx-5">
           {/* Toggle the cart */}
