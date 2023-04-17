@@ -1,18 +1,19 @@
 import { create } from "zustand"; // Import create from zustand, creates store instance
 import { persist } from "zustand/middleware"; // Import persist middleware
 import { AddCartType } from "./types/AddCartType";
+import { Theme } from "next-auth";
 
 // Cart item type
 type CartState = {
-  isOpen: boolean; 
-  cart: AddCartType[]; 
-  toggleCart: () => void; 
-  clearCart: () => void; 
+  isOpen: boolean;
+  cart: AddCartType[];
+  toggleCart: () => void;
+  clearCart: () => void;
   addProduct: (item: AddCartType) => void;
-  removeProduct: (item: AddCartType) => void; 
-  paymentIntent: string;  
-  onCheckout: string; 
-  setPaymentIntent: (val: string) => void; 
+  removeProduct: (item: AddCartType) => void;
+  paymentIntent: string;
+  onCheckout: string;
+  setPaymentIntent: (val: string) => void;
   setCheckout: (val: string) => void;
 };
 
@@ -66,8 +67,23 @@ export const useCartStore = create<CartState>()(
         }),
       setPaymentIntent: (val) => set((state) => ({ paymentIntent: val })),
       setCheckout: (val) => set((state) => ({ onCheckout: val })),
-      clearCart: () => set((state) => ({ cart: []}))
+      clearCart: () => set((state) => ({ cart: [] })),
     }),
     { name: "cart-store" }
+  )
+);
+
+type ThemeState = {
+  mode: "light" | "dark";
+  toggleMode: (theme: "light" | "dark") => void;
+};
+
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set) => ({
+      mode: "light",
+      toggleMode: (theme) => set((state) => ({ mode: theme })),
+    }),
+    { name: "theme-store" }
   )
 );

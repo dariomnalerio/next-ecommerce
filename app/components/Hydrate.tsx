@@ -4,9 +4,11 @@
 // useEffect is a hook that will run a function when the component mounts
 // useState is a hook that will create a state variable
 import { ReactNode, useEffect, useState } from "react";
+import { useThemeStore } from "@/store";
 
 export default function Hydrate({ children }: { children: ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false); // Create a state variable to determine if the component is hydrated
+  const themeStore = useThemeStore(); // Get the theme store
 
   // Wait till Nextjs rehydration completes
   useEffect(() => {
@@ -14,7 +16,13 @@ export default function Hydrate({ children }: { children: ReactNode }) {
   }, []);
   return (
     <>
-    {isHydrated ? <>{children}</> : <div>Loading...</div>}
+      {isHydrated ? (
+        <body className="px-4 lg:px-48" data-theme={themeStore.mode}>
+          {children}
+        </body>
+      ) : (
+        <body></body>
+      )}
     </>
-  )
+  );
 }
