@@ -14,6 +14,9 @@ module.exports = {
         lobster: ["var(--font-lobster)"],
         roboto: ["var(--font-roboto)"],
       },
+      screens: {
+        "3xl": "1700px",
+      },
     },
   },
   plugins: [require("daisyui")],
