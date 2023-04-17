@@ -60,21 +60,22 @@ export default function Cart() {
                 <motion.div
                   layout
                   key={item.id}
-                  className="flex p-4 my-4 gap-4 bg-base-200 rounded-lg"
+                  className="flex p-1 my-4 gap-4 bg-base-200 rounded-lg"
                 >
                   <Image
-                    className=" rounded-md h-24"
+                    className=" rounded-md h-34 py-2"
                     src={item.image}
                     alt={item.name}
                     width={120}
                     height={120}
                   />
                   <motion.div layout>
-                    <h2>{item.name}</h2>
+                    <h2 className="mt-2">{item.name}</h2>
                     {/* Update quantity of a product */}
                     <div className="flex gap-2">
                       <h2>Quantity: {item.quantity}</h2>
                       <button
+                        className="sm: mt-5"
                         onClick={() =>
                           cartStore.removeProduct({
                             name: item.name,
@@ -88,6 +89,7 @@ export default function Cart() {
                         <IoRemoveCircle />
                       </button>
                       <button
+                        className="sm: mt-5"
                         onClick={() =>
                           cartStore.addProduct({
                             name: item.name,
