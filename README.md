@@ -1,4 +1,3 @@
-
 # Next E-commerce
 
 Fullstack e-commerce application using technologies such as:
@@ -41,6 +40,7 @@ Fullstack e-commerce application using technologies such as:
 
 ## Demo
 
+Railway no longer offers a free tier for database hosting. Login and order processing is not currently working
 https://next-ecommerce-dariomnalerio.vercel.app/
 
 ## Environment Variables
